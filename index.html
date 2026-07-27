@@ -1,0 +1,3379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>StreamAdda</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+*{box-sizing:border-box;}
+
+body{
+  background:#0d0d14;
+  color:#e2e2f0;
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+}
+
+.field{
+  background:#1a1a24;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;
+  color:#e2e2f0;
+  font-size:.875rem;
+  padding:.6rem .85rem;
+  width:100%;
+  outline:none;
+  transition:border-color .2s;
+}
+
+.field:focus{
+  border-color:rgba(99,102,241,.6);
+}
+
+.field::placeholder{
+  color:rgba(255,255,255,.25);
+}
+
+select.field option{
+  background:#1a1a24;
+}
+
+input[type=datetime-local]{
+  color-scheme:dark;
+}
+
+.btn{
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600;
+  padding:.7rem 1.4rem;
+  transition:opacity .2s,transform .15s;
+}
+
+.btn-primary{
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);
+  color:#fff;
+  box-shadow:0 4px 20px rgba(99,102,241,.4);
+}
+
+.btn-primary:hover:not(:disabled){
+  opacity:.9;
+  transform:translateY(-1px);
+}
+
+.btn-primary:disabled{
+  opacity:.4;
+  cursor:not-allowed;
+}
+
+.btn-danger{
+  background:rgba(239,68,68,.12);
+  color:#f87171;
+  border:1px solid rgba(239,68,68,.3);
+}
+
+.btn-danger:hover{
+  background:rgba(239,68,68,.22);
+}
+
+.btn-ghost{
+  background:#1a1a24;
+  color:rgba(255,255,255,.5);
+  border:1px solid rgba(255,255,255,.1);
+}
+
+.btn-ghost:hover{
+  background:#222230;
+  color:#e2e2f0;
+}
+
+.btn-blue{
+  background:rgba(96,165,250,.1);
+  color:#93c5fd;
+  border:1px solid rgba(96,165,250,.25);
+}
+
+.btn-blue:hover{
+  background:rgba(96,165,250,.2);
+}
+
+.prog-wrap{
+  background:#1a1a24;
+  border-radius:999px;
+  height:5px;
+  overflow:hidden;
+}
+
+.prog-bar{
+  height:5px;
+  background:linear-gradient(90deg,#6366f1,#8b5cf6);
+  border-radius:999px;
+  width:0%;
+  transition:width .2s;
+}
+
+.dropzone{
+  border:2px dashed rgba(99,102,241,.3);
+  border-radius:12px;
+  padding:1.5rem 1rem;
+  text-align:center;
+  cursor:pointer;
+  transition:border-color .2s,background .2s;
+  position:relative;
+}
+
+.dropzone:hover,
+.dropzone.drag{
+  border-color:rgba(99,102,241,.7);
+  background:rgba(99,102,241,.05);
+}
+
+.dropzone input[type=file]{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  cursor:pointer;
+  width:100%;
+  height:100%;
+}
+
+.card{
+  background:#13131e;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:16px;
+  transition:border-color .3s;
+}
+
+.card.online{
+  border-color:rgba(74,222,128,.25);
+}
+
+.card.error{
+  border-color:rgba(239,68,68,.35);
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:3px 10px;
+  border-radius:999px;
+  font-size:.7rem;
+  font-family:'JetBrains Mono',monospace;
+  font-weight:600;
+}
+
+.badge-on{
+  background:rgba(74,222,128,.12);
+  color:#86efac;
+  border:1px solid rgba(74,222,128,.3);
+}
+
+.badge-off{
+  background:rgba(255,255,255,.05);
+  color:rgba(255,255,255,.35);
+  border:1px solid rgba(255,255,255,.1);
+}
+
+.badge-sched{
+  background:rgba(96,165,250,.12);
+  color:#93c5fd;
+  border:1px solid rgba(96,165,250,.25);
+}
+
+.badge-start{
+  background:rgba(251,191,36,.12);
+  color:#fde68a;
+  border:1px solid rgba(251,191,36,.3);
+}
+
+.badge-video{
+  background:rgba(167,139,250,.12);
+  color:#c4b5fd;
+  border:1px solid rgba(167,139,250,.25);
+}
+
+.dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  flex-shrink:0;
+}
+
+.dot-on{
+  background:#4ade80;
+  box-shadow:0 0 6px #4ade80;
+  animation:pg 1.5s infinite;
+}
+
+.dot-off{
+  background:rgba(255,255,255,.25);
+}
+
+.dot-sched{
+  background:#93c5fd;
+}
+
+.dot-start{
+  background:#fbbf24;
+  animation:py 1s infinite;
+}
+
+.dot-video{
+  background:#c4b5fd;
+  animation:pg 1.5s infinite;
+}
+
+@keyframes pg{
+  0%,100%{opacity:1}
+  50%{opacity:.5}
+}
+
+@keyframes py{
+  0%,100%{opacity:1}
+  50%{opacity:.3}
+}
+
+.log{
+  background:#080810;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:8px;
+  padding:.75rem;
+  max-height:180px;
+  overflow-y:auto;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;
+  line-height:1.6;
+  color:rgba(255,255,255,.5);
+  word-break:break-all;
+}
+
+#toasts{
+  position:fixed;
+  bottom:1.5rem;
+  right:1rem;
+  z-index:9999;
+  display:flex;
+  flex-direction:column;
+  gap:.5rem;
+  align-items:flex-end;
+}
+
+.toast{
+  background:#1a1a24;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;
+  padding:.6rem 1rem;
+  font-size:.78rem;
+  font-family:'JetBrains Mono',monospace;
+  max-width:300px;
+  animation:fadein .3s ease;
+}
+
+.toast.ok{
+  border-color:rgba(74,222,128,.4);
+  color:#86efac;
+}
+
+.toast.err{
+  border-color:rgba(239,68,68,.4);
+  color:#fca5a5;
+}
+
+.toast.inf{
+  border-color:rgba(99,102,241,.4);
+  color:#a5b4fc;
+}
+
+@keyframes fadein{
+  from{
+    opacity:0;
+    transform:translateY(8px)
+  }
+  to{
+    opacity:1;
+    transform:none
+  }
+}
+
+.tgl-wrap{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  cursor:pointer;
+}
+
+.tgl-in{
+  position:absolute;
+  opacity:0;
+  width:0;
+  height:0;
+}
+
+.tgl-track{
+  width:40px;
+  height:22px;
+  background:#1a1a24;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.1);
+  position:relative;
+  transition:background .2s;
+  flex-shrink:0;
+}
+
+.tgl-thumb{
+  position:absolute;
+  left:3px;
+  top:50%;
+  transform:translateY(-50%);
+  width:16px;
+  height:16px;
+  background:#fff;
+  border-radius:50%;
+  transition:left .2s;
+}
+
+.tgl-in:checked~.tgl-track{
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);
+}
+
+.tgl-in:checked~.tgl-track .tgl-thumb{
+  left:21px;
+}
+
+.ratio-btn{
+  flex:1;
+  padding:.45rem;
+  border-radius:7px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.72rem;
+  font-weight:700;
+  cursor:pointer;
+  border:none;
+  transition:background .2s,color .2s;
+}
+
+.lbl{
+  display:block;
+  font-size:.68rem;
+  font-family:'JetBrains Mono',monospace;
+  letter-spacing:.08em;
+  color:rgba(255,255,255,.35);
+  margin-bottom:.4rem;
+  text-transform:uppercase;
+}
+
+hr.rule{
+  border:none;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+</style>
+</head>
+
+<body>
+
+<div id="toasts"></div>
+
+<!-- NAVBAR -->
+<nav
+  style="background:rgba(13,13,20,.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06);"
+  class="sticky top-0 z-50"
+>
+
+  <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+
+    <div class="flex items-center gap-3">
+
+      <div
+        class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+        style="background:linear-gradient(135deg,#6366f1,#8b5cf6);"
+      >
+
+        <svg
+          class="w-4 h-4 text-white"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"/>
+        </svg>
+
+      </div>
+
+      <div>
+
+        <div class="font-bold text-white text-sm leading-tight">
+          StreamAdda
+        </div>
+
+        <div
+          style="font-size:.6rem;color:rgba(255,255,255,.3);font-family:'JetBrains Mono',monospace;"
+        >
+          VIDEO LOOP LIVE
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="flex items-center gap-2">
+
+      <div
+        id="hpill"
+        class="hidden items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono"
+        style="background:#1a1a24;border:1px solid rgba(255,255,255,.07);"
+      >
+
+        <span
+          id="hdot"
+          class="w-2 h-2 rounded-full bg-gray-500"
+        ></span>
+
+        <span
+          id="htxt"
+          style="color:rgba(255,255,255,.4);"
+        >
+          …
+        </span>
+
+      </div>
+
+      <div
+        id="livechip"
+        class="hidden items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono"
+        style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.3);color:#a5b4fc;"
+      >
+
+        <span
+          class="dot dot-on"
+          style="background:#818cf8;box-shadow:0 0 6px #818cf8;"
+        ></span>
+
+        <span id="livecount">
+          0
+        </span>
+
+        LIVE
+
+      </div>
+
+      <button
+        onclick="openModal()"
+        class="btn btn-primary text-sm px-4 py-2 flex items-center gap-1.5"
+      >
+
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M12 4v16m8-8H4"
+          />
+        </svg>
+
+        New Stream
+
+      </button>
+
+    </div>
+
+  </div>
+
+</nav>
+
+
+<!-- MAIN -->
+<main class="max-w-4xl mx-auto px-4 py-6 pb-20">
+
+  <div
+    id="empty"
+    class="text-center py-24"
+  >
+
+    <div
+      class="w-20 h-20 mx-auto mb-5 rounded-2xl flex items-center justify-center"
+      style="background:rgba(99,102,241,.08);border:2px dashed rgba(99,102,241,.25);"
+    >
+
+      <svg
+        class="w-9 h-9"
+        style="color:rgba(99,102,241,.4);"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.5"
+          d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.361a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+        />
+
+      </svg>
+
+    </div>
+
+    <h2 class="font-bold text-xl text-white mb-2">
+      No Active Streams
+    </h2>
+
+    <p class="text-sm text-white/40 mb-6">
+      Upload a video and start unlimited loop streaming.
+    </p>
+
+    <button
+      onclick="openModal()"
+      class="btn btn-primary px-6 py-3"
+    >
+      Start Stream
+    </button>
+
+  </div>
+
+  <div
+    id="grid"
+    class="grid gap-4 grid-cols-1 md:grid-cols-2 hidden"
+  ></div>
+
+</main>
+
+
+<!-- NEW STREAM MODAL -->
+<div
+  id="overlay"
+  class="fixed inset-0 z-[200] flex items-end sm:items-center justify-center hidden"
+  style="background:rgba(0,0,0,.75);backdrop-filter:blur(6px);"
+  onclick="maybeClose(event)"
+>
+
+  <div
+    id="mbox"
+    class="w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl overflow-y-auto"
+    style="background:#13131e;border:1px solid rgba(255,255,255,.08);max-height:94vh;"
+    onclick="event.stopPropagation()"
+  >
+
+    <div
+      class="flex items-center justify-between px-5 pt-5 pb-4"
+      style="border-bottom:1px solid rgba(255,255,255,.06);"
+    >
+
+      <h2 class="font-bold text-lg text-white">
+        New Stream
+      </h2>
+
+      <button
+        onclick="closeModal()"
+        class="w-8 h-8 rounded-full flex items-center justify-center text-white/40 hover:text-white/70"
+        style="background:#1a1a24;"
+      >
+        ✕
+      </button>
+
+    </div>
+
+
+    <div class="px-5 py-4 space-y-4">
+
+      <!-- NAME -->
+      <div>
+
+        <label class="lbl">
+          Stream Name
+        </label>
+
+        <input
+          id="f-name"
+          class="field"
+          type="text"
+          placeholder="My Live Stream"
+          autocomplete="off"
+        />
+
+      </div>
+
+
+      <!-- RATIO -->
+      <div>
+
+        <label class="lbl">
+          Video Ratio
+        </label>
+
+        <div
+          class="flex gap-1 p-1 rounded-xl"
+          style="background:#0d0d14;"
+        >
+
+          <button
+            id="r169"
+            class="ratio-btn"
+            onclick="setRatio('16:9')"
+            style="background:#1a1a24;color:#e2e2f0;"
+          >
+            ⬛ 16:9 Landscape
+          </button>
+
+          <button
+            id="r916"
+            class="ratio-btn"
+            onclick="setRatio('9:16')"
+            style="color:rgba(255,255,255,.4);"
+          >
+            📱 9:16 Vertical
+          </button>
+
+        </div>
+
+        <p
+          id="ratio-hint"
+          class="text-xs font-mono mt-1"
+          style="color:rgba(255,255,255,.25);"
+        ></p>
+
+      </div>
+
+
+      <!-- TOTAL DURATION -->
+      <div>
+
+        <label class="lbl">
+          Total Stream Duration (minutes)
+        </label>
+
+        <input
+          id="f-dur"
+          class="field font-mono"
+          type="number"
+          min="2"
+          max="100000"
+          placeholder="e.g. 60"
+          autocomplete="off"
+        />
+
+        <p
+          class="text-xs font-mono mt-1"
+          style="color:rgba(99,102,241,.7);"
+        >
+          Video will loop continuously until the total duration ends.
+        </p>
+
+      </div>
+
+
+      <!-- VIDEO UPLOAD -->
+      <div>
+
+        <label
+          class="lbl"
+          style="color:rgba(167,139,250,.6);"
+        >
+          🎬 Video · Max 4GB
+        </label>
+
+        <div
+          class="dropzone"
+          id="dz-video"
+          ondragover="dzOver(event,'dz-video')"
+          ondragleave="dzOut(event,'dz-video')"
+          ondrop="dzDrop(event,'video')"
+        >
+
+          <input
+            type="file"
+            id="f-video"
+            accept="video/*,.mp4,.mkv,.mov,.avi,.webm,.m4v"
+            onchange="fileChosen(this,'video')"
+          />
+
+          <div id="video-idle">
+
+            <svg
+              class="w-8 h-8 mx-auto mb-2"
+              style="color:rgba(167,139,250,.4);"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.361a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+              />
+
+            </svg>
+
+            <p
+              class="text-sm font-mono"
+              style="color:rgba(255,255,255,.4);"
+            >
+              Click or drag video
+            </p>
+
+            <p
+              class="text-xs font-mono mt-1"
+              style="color:rgba(255,255,255,.2);"
+            >
+              MP4 · MKV · MOV · AVI · WEBM
+            </p>
+
+          </div>
+
+
+          <div
+            id="video-ok"
+            class="hidden"
+          >
+
+            <svg
+              class="w-7 h-7 mx-auto mb-1"
+              style="color:#4ade80;"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
+
+            </svg>
+
+            <p
+              id="video-name"
+              class="text-sm font-mono text-white/60 truncate px-4"
+            ></p>
+
+            <p
+              id="video-size"
+              class="text-xs font-mono mt-0.5"
+              style="color:rgba(255,255,255,.3);"
+            ></p>
+
+          </div>
+
+        </div>
+
+
+        <div
+          id="video-prog"
+          class="hidden mt-2"
+        >
+
+          <div class="flex justify-between mb-1">
+
+            <span
+              class="text-xs font-mono"
+              style="color:rgba(255,255,255,.35);"
+            >
+              Uploading video…
+            </span>
+
+            <span
+              id="video-pct"
+              class="text-xs font-mono"
+              style="color:rgba(255,255,255,.5);"
+            >
+              0%
+            </span>
+
+          </div>
+
+          <div class="prog-wrap">
+
+            <div
+              id="video-bar"
+              class="prog-bar"
+            ></div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- PLATFORM -->
+      <div>
+
+        <label class="lbl">
+          Platform
+        </label>
+
+        <select
+          id="f-platform"
+          class="field"
+        >
+
+          <option value="youtube">
+            ▶ YouTube Live
+          </option>
+
+          <option value="facebook">
+            𝒻 Facebook Live
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- STREAM KEY -->
+      <div>
+
+        <label class="lbl">
+          Stream Key
+        </label>
+
+        <input
+          id="f-key"
+          class="field font-mono"
+          type="password"
+          placeholder="xxxx-xxxx-xxxx-xxxx"
+          autocomplete="off"
+        />
+
+        <p
+          class="text-xs font-mono mt-1"
+          style="color:rgba(255,255,255,.2);"
+        >
+          Never stored permanently.
+        </p>
+
+      </div>
+
+
+      <!-- BACKUP RTMP -->
+      <div>
+
+        <label class="lbl">
+
+          Backup RTMP
+
+          <span
+            style="text-transform:none;font-size:.65rem;color:rgba(255,255,255,.2);"
+          >
+            (optional)
+          </span>
+
+        </label>
+
+        <input
+          id="f-backup"
+          class="field font-mono"
+          type="url"
+          placeholder="rtmps://backup.server.com/live/key"
+        />
+
+      </div>
+
+
+      <!-- SCHEDULE -->
+      <div>
+
+        <div
+          class="flex items-center justify-between px-0.5 mb-2"
+        >
+
+          <div>
+
+            <p
+              class="text-xs font-mono"
+              style="color:rgba(255,255,255,.4);"
+            >
+              SCHEDULE
+            </p>
+
+            <p
+              class="text-xs font-mono"
+              style="color:rgba(255,255,255,.2);"
+            >
+              Set start & stop time
+            </p>
+
+          </div>
+
+          <label class="tgl-wrap">
+
+            <input
+              type="checkbox"
+              id="f-sched"
+              class="tgl-in"
+              onchange="toggleSched()"
+            />
+
+            <span class="tgl-track">
+
+              <span class="tgl-thumb"></span>
+
+            </span>
+
+          </label>
+
+        </div>
+
+
+        <div
+          id="sched-panel"
+          class="hidden space-y-3 p-3 rounded-xl"
+          style="background:rgba(96,165,250,.05);border:1px solid rgba(96,165,250,.12);"
+        >
+
+          <div>
+
+            <label
+              class="lbl"
+              style="color:rgba(96,165,250,.6);"
+            >
+              Start Time
+            </label>
+
+            <input
+              id="f-start"
+              class="field font-mono"
+              type="datetime-local"
+            />
+
+          </div>
+
+
+          <div>
+
+            <label
+              class="lbl"
+              style="color:rgba(96,165,250,.6);"
+            >
+              Stop Time
+            </label>
+
+            <input
+              id="f-stop"
+              class="field font-mono"
+              type="datetime-local"
+            />
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- SUBMIT -->
+      <button
+        id="submit-btn"
+        onclick="submitStream()"
+        class="btn btn-primary w-full py-3 flex items-center justify-center gap-2"
+      >
+
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+          />
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+
+        </svg>
+
+        <span id="submit-lbl">
+          Start Stream
+        </span>
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- SCHEDULE STOP MODAL -->
+<div
+  id="sched-overlay"
+  class="fixed inset-0 z-[300] flex items-center justify-center hidden"
+  style="background:rgba(0,0,0,.75);"
+  onclick="if(event.target===this)this.classList.add('hidden')"
+>
+
+  <div
+    class="w-full max-w-sm rounded-2xl p-6 space-y-4"
+    style="background:#13131e;border:1px solid rgba(96,165,250,.2);"
+    onclick="event.stopPropagation()"
+  >
+
+    <h3 class="font-bold text-white">
+      Schedule Stop Time
+    </h3>
+
+    <div>
+
+      <label
+        class="lbl"
+        style="color:rgba(96,165,250,.6);"
+      >
+        Stop At
+      </label>
+
+      <input
+        id="sched-stop-val"
+        class="field font-mono"
+        type="datetime-local"
+      />
+
+      <p
+        class="text-xs font-mono mt-1"
+        style="color:rgba(255,255,255,.2);"
+      >
+        Blank = clear schedule
+      </p>
+
+    </div>
+
+    <div class="flex gap-2">
+
+      <button
+        class="btn btn-ghost flex-1"
+        onclick="document.getElementById('sched-overlay').classList.add('hidden')"
+      >
+        Cancel
+      </button>
+
+      <button
+        class="btn btn-blue flex-1"
+        onclick="applyStop()"
+      >
+        Apply
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+'use strict';
+
+
+const S = {
+
+  ratio: '9:16',
+
+  videoFile: null,
+
+  videoPath: null,
+
+  videoFilename: null,
+
+  streams: {},
+
+  evtSrc: {},
+
+  timers: {},
+
+  schedId: null
+
+};
+
+
+// INIT
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  checkHealth();
+
+  fetchStreams();
+
+  setInterval(fetchStreams, 6000);
+
+  setInterval(checkHealth, 30000);
+
+  setRatio('9:16');
+
+});
+
+
+// HEALTH
+
+async function checkHealth(){
+
+  try{
+
+    const r = await fetch('/api/health');
+
+    const d = await r.json();
+
+    const p = document.getElementById('hpill');
+
+    p.classList.remove('hidden');
+
+    p.classList.add('flex');
+
+    const dot = document.getElementById('hdot');
+
+    const txt = document.getElementById('htxt');
+
+    if(d.ffmpeg){
+
+      dot.style.background = '#4ade80';
+
+      txt.textContent = 'FFmpeg OK';
+
+      txt.style.color = '#86efac';
+
+    }else{
+
+      dot.style.background = '#f87171';
+
+      txt.textContent = 'FFmpeg ✗';
+
+      txt.style.color = '#fca5a5';
+
+    }
+
+  }catch(e){
+
+    console.log(e);
+
+  }
+
+}
+
+
+// FETCH STREAMS
+
+async function fetchStreams(){
+
+  try{
+
+    const r = await fetch('/api/streams');
+
+    const d = await r.json();
+
+    reconcile(d);
+
+  }catch(e){
+
+    console.log(e);
+
+  }
+
+}
+
+
+// RECONCILE
+
+function reconcile(fresh){
+
+  for(const [id,info] of Object.entries(fresh)){
+
+    S.streams[id] = info;
+
+    if(!document.getElementById('card-'+id)){
+
+      renderCard(info);
+
+      attachSSE(id);
+
+    }else{
+
+      updateCard(info);
+
+    }
+
+  }
+
+
+  for(const id of Object.keys(S.streams)){
+
+    if(!fresh[id]){
+
+      removeCard(id);
+
+    }
+
+  }
+
+
+  const n = Object.keys(fresh).length;
+
+  document.getElementById('empty').classList.toggle('hidden',n>0);
+
+  document.getElementById('grid').classList.toggle('hidden',n===0);
+
+
+  const live = Object.values(fresh).filter(
+
+    s => isActive(s.status)
+
+  ).length;
+
+
+  const chip = document.getElementById('livechip');
+
+
+  if(live>0){
+
+    chip.classList.remove('hidden');
+
+    chip.classList.add('flex');
+
+    document.getElementById('livecount').textContent = live;
+
+  }else{
+
+    chip.classList.add('hidden');
+
+  }
+
+}
+
+
+// ACTIVE STATUS
+
+function isActive(st){
+
+  return [
+
+    'online',
+
+    'video_phase',
+
+    'starting'
+
+  ].includes(st);
+
+}
+
+
+// BADGES
+
+function badgeCls(st){
+
+  return {
+
+    online:'badge-on',
+
+    scheduled:'badge-sched',
+
+    starting:'badge-start',
+
+    offline:'badge-off',
+
+    video_phase:'badge-video',
+
+    error:'badge-off'
+
+  }[st] || 'badge-off';
+
+}
+
+
+function dotCls(st){
+
+  return {
+
+    online:'dot-on',
+
+    scheduled:'dot-sched',
+
+    starting:'dot-start',
+
+    offline:'dot-off',
+
+    video_phase:'dot-video',
+
+    error:'dot-off'
+
+  }[st] || 'dot-off';
+
+}
+
+
+function badgeLbl(st){
+
+  return {
+
+    online:'ONLINE',
+
+    scheduled:'SCHEDULED',
+
+    starting:'STARTING',
+
+    offline:'OFFLINE',
+
+    video_phase:'🎬 VIDEO',
+
+    error:'ERROR'
+
+  }[st] || String(st).toUpperCase();
+
+}
+
+
+// RENDER CARD
+
+function renderCard(info){
+
+  const g = document.getElementById('grid');
+
+  const d = document.createElement('div');
+
+  d.id = 'card-'+info.id;
+
+  d.className = 'card '+(
+
+    isActive(info.status) ? 'online' : ''
+
+  );
+
+  d.innerHTML = cardHTML(info);
+
+  g.appendChild(d);
+
+  startTimer(
+
+    info.id,
+
+    info.status,
+
+    info.uptime
+
+  );
+
+}
+
+
+// UPDATE CARD
+
+function updateCard(info){
+
+  const c = document.getElementById('card-'+info.id);
+
+  if(!c){
+
+    renderCard(info);
+
+    return;
+
+  }
+
+
+  c.className = 'card '+(
+
+    isActive(info.status) ? 'online' : ''
+
+  );
+
+
+  const b = c.querySelector('.sbadge');
+
+
+  if(b){
+
+    b.className = 'sbadge badge '+badgeCls(info.status);
+
+    b.querySelector('.sdot').className =
+
+      'sdot dot '+dotCls(info.status);
+
+    b.querySelector('.slbl').textContent =
+
+      badgeLbl(info.status);
+
+  }
+
+
+  const stop = c.querySelector('.stop-btn');
+
+  if(stop){
+
+    stop.classList.toggle(
+
+      'hidden',
+
+      !isActive(info.status)
+
+    );
+
+  }
+
+
+  const newBtn = c.querySelector('.new-btn');
+
+  if(newBtn){
+
+    newBtn.classList.toggle(
+
+      'hidden',
+
+      isActive(info.status) ||
+
+      info.status === 'scheduled'
+
+    );
+
+  }
+
+
+  if(!isActive(info.status)){
+
+    const uv = c.querySelector('.uptime-val');
+
+    if(uv){
+
+      uv.textContent = info.status === 'scheduled'
+
+        ? 'Waiting…'
+
+        : '—';
+
+    }
+
+  }
+
+
+  const stlbl = c.querySelector('.stop-lbl');
+
+  if(stlbl){
+
+    stlbl.textContent = info.stop_at
+
+      ? '⏱ Stops: '+fmtISO(info.stop_at)
+
+      : '';
+
+  }
+
+
+  const logwrap = document.getElementById(
+
+    'logwrap-'+info.id
+
+  );
+
+
+  if(
+
+    logwrap &&
+
+    !isActive(info.status) &&
+
+    info.status !== 'offline'
+
+  ){
+
+    logwrap.classList.remove('hidden');
+
+  }
+
+
+  startTimer(
+
+    info.id,
+
+    info.status,
+
+    info.uptime
+
+  );
+
+}
+
+
+// REMOVE CARD
+
+function removeCard(id){
+
+  clearInterval(S.timers[id]);
+
+  delete S.timers[id];
+
+
+  if(S.evtSrc[id]){
+
+    S.evtSrc[id].close();
+
+    delete S.evtSrc[id];
+
+  }
+
+
+  document.getElementById(
+
+    'card-'+id
+
+  )?.remove();
+
+
+  delete S.streams[id];
+
+}
+
+
+// CARD HTML
+
+function cardHTML(info){
+
+  const active = isActive(info.status);
+
+  const sched = info.status === 'scheduled';
+
+
+  return `
+
+<div class="p-4">
+
+  <div class="flex items-start justify-between gap-3 mb-3">
+
+    <div class="flex-1 min-w-0">
+
+      <div class="flex items-center gap-2 flex-wrap mb-1">
+
+        <span class="font-bold text-white text-sm truncate">
+
+          ${esc(info.name)}
+
+        </span>
+
+        <span class="sbadge badge ${badgeCls(info.status)}">
+
+          <span class="sdot dot ${dotCls(info.status)}"></span>
+
+          <span class="slbl">
+
+            ${badgeLbl(info.status)}
+
+          </span>
+
+        </span>
+
+      </div>
+
+
+      ${
+        info.filename
+
+        ? `
+
+        <div
+
+          class="text-xs font-mono truncate"
+
+          style="color:rgba(255,255,255,.25);"
+
+        >
+
+          🎬 ${esc(info.filename)}
+
+        </div>
+
+        `
+
+        : ''
+
+      }
+
+
+      <div
+
+        class="text-xs font-mono mt-0.5"
+
+        style="color:rgba(99,102,241,.6);"
+
+      >
+
+        ${info.ratio} · ${info.total_minutes}min total
+
+      </div>
+
+    </div>
+
+
+    <button
+
+      onclick="delStream('${info.id}')"
+
+      class="flex-shrink-0 text-xs font-mono px-2 py-1 rounded-md"
+
+      style="background:transparent;color:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.08);cursor:pointer;"
+
+    >
+
+      ✕
+
+    </button>
+
+  </div>
+
+
+  <div
+
+    class="stop-lbl text-xs font-mono mb-3"
+
+    style="color:rgba(255,255,255,.25);"
+
+  >
+
+    ${info.stop_at ? '⏱ Stops: '+fmtISO(info.stop_at) : ''}
+
+  </div>
+
+
+  <hr class="rule mb-3"/>
+
+
+  <div class="flex items-center justify-between mb-3">
+
+    <span
+
+      class="text-xs font-mono"
+
+      style="color:rgba(255,255,255,.3);"
+
+    >
+
+      UPTIME
+
+    </span>
+
+
+    <span
+
+      class="uptime-val font-mono text-white text-sm"
+
+    >
+
+      ${active ? fmt(info.uptime || 0) : (sched ? 'Waiting…' : '—')}
+
+    </span>
+
+  </div>
+
+
+  <div class="flex gap-2 mb-3">
+
+    <button
+
+      class="stop-btn btn btn-danger flex-1 flex items-center justify-center gap-1.5 text-sm ${active ? '' : 'hidden'}"
+
+      onclick="stopStream('${info.id}')"
+
+    >
+
+      <svg
+
+        class="w-3.5 h-3.5"
+
+        fill="currentColor"
+
+        viewBox="0 0 20 20"
+
+      >
+
+        <rect
+
+          x="5"
+
+          y="5"
+
+          width="10"
+
+          height="10"
+
+          rx="1"
+
+        />
+
+      </svg>
+
+      Stop
+
+    </button>
+
+
+    <button
+
+      class="new-btn btn btn-ghost flex-1 text-sm ${(active||sched)?'hidden':''}"
+
+      onclick="openModal()"
+
+    >
+
+      + New Stream
+
+    </button>
+
+
+    <button
+
+      class="btn btn-blue px-3 py-2 text-xs"
+
+      onclick="openSchedModal('${info.id}')"
+
+    >
+
+      ⏱ Stop At
+
+    </button>
+
+
+    <button
+
+      class="btn btn-ghost px-3 py-2"
+
+      onclick="toggleLog('${info.id}')"
+
+    >
+
+      📄
+
+    </button>
+
+  </div>
+
+
+  <div
+
+    id="logwrap-${info.id}"
+
+    class="hidden"
+
+  >
+
+    <div class="flex justify-between items-center mb-1.5">
+
+      <span
+
+        class="text-xs font-mono"
+
+        style="color:rgba(255,255,255,.25);"
+
+      >
+
+        FFmpeg Output
+
+      </span>
+
+
+      <button
+
+        onclick="clearLog('${info.id}')"
+
+        class="text-xs font-mono px-2 py-0.5 rounded"
+
+        style="background:#1a1a24;color:rgba(255,255,255,.3);border:none;cursor:pointer;"
+
+      >
+
+        Clear
+
+      </button>
+
+    </div>
+
+
+    <div
+
+      id="log-${info.id}"
+
+      class="log"
+
+    >
+
+      <span
+
+        style="color:rgba(255,255,255,.2);"
+
+      >
+
+        Waiting for output…
+
+      </span>
+
+    </div>
+
+  </div>
+
+</div>
+
+`;
+
+}
+
+
+// TIMERS
+
+function startTimer(id,status,init){
+
+  clearInterval(S.timers[id]);
+
+
+  if(!isActive(status)){
+
+    return;
+
+  }
+
+
+  let s = init || 0;
+
+
+  S.timers[id] = setInterval(()=>{
+
+    s++;
+
+
+    const el = document.querySelector(
+
+      '#card-'+id+' .uptime-val'
+
+    );
+
+
+    if(el){
+
+      el.textContent = fmt(s);
+
+    }
+
+  },1000);
+
+}
+
+
+function fmt(s){
+
+  s = Math.floor(s);
+
+
+  if(s<60){
+
+    return s+'s';
+
+  }
+
+
+  if(s<3600){
+
+    return Math.floor(s/60)+'m '+
+
+      (s%60)+'s';
+
+  }
+
+
+  return Math.floor(s/3600)+'h '+
+
+    Math.floor((s%3600)/60)+'m '+
+
+    (s%60)+'s';
+
+}
+
+
+function fmtISO(ts){
+
+  try{
+
+    return new Date(
+
+      typeof ts === 'number'
+
+      ? ts*1000
+
+      : ts
+
+    ).toLocaleString();
+
+  }catch(e){
+
+    return '';
+
+  }
+
+}
+
+
+// SSE
+
+function attachSSE(id){
+
+  if(S.evtSrc[id]){
+
+    S.evtSrc[id].close();
+
+  }
+
+
+  const es = new EventSource(
+
+    `/api/streams/${id}/events`
+
+  );
+
+
+  S.evtSrc[id] = es;
+
+
+  es.onmessage = e=>{
+
+    if(e.data){
+
+      appendLog(id,e.data);
+
+    }
+
+  };
+
+
+  es.onerror = ()=>{};
+
+}
+
+
+function appendLog(id,line){
+
+  const el = document.getElementById(
+
+    'log-'+id
+
+  );
+
+
+  if(!el){
+
+    return;
+
+  }
+
+
+  const ph = el.querySelector(
+
+    'span[style*="rgba(255,255,255,.2)"]'
+
+  );
+
+
+  if(ph){
+
+    ph.remove();
+
+  }
+
+
+  const d = document.createElement('div');
+
+  d.textContent = line;
+
+
+  const lo = line.toLowerCase();
+
+
+  if(
+
+    /error|fail|refused|broken|unable|end of file/i.test(lo)
+
+  ){
+
+    d.style.color = '#fca5a5';
+
+
+    document.getElementById(
+
+      'logwrap-'+id
+
+    )?.classList.remove('hidden');
+
+  }
+
+  else if(/warn/i.test(lo)){
+
+    d.style.color = '#fde68a';
+
+  }
+
+  else if(/frame=|fps=|bitrate=/i.test(line)){
+
+    d.style.color = '#93c5fd';
+
+  }
+
+  else if(/\[sa\]/i.test(line)){
+
+    d.style.color = '#c4b5fd';
+
+  }
+
+
+  el.appendChild(d);
+
+
+  while(el.children.length>200){
+
+    el.removeChild(el.firstChild);
+
+  }
+
+
+  el.scrollTop = el.scrollHeight;
+
+}
+
+
+function toggleLog(id){
+
+  document.getElementById(
+
+    'logwrap-'+id
+
+  )?.classList.toggle('hidden');
+
+}
+
+
+function clearLog(id){
+
+  const el = document.getElementById(
+
+    'log-'+id
+
+  );
+
+
+  if(el){
+
+    el.innerHTML =
+
+      '<span style="color:rgba(255,255,255,.2);">Cleared</span>';
+
+  }
+
+}
+
+
+// STOP STREAM
+
+async function stopStream(id){
+
+  try{
+
+    await fetch(
+
+      `/api/streams/${id}/stop`,
+
+      {method:'POST'}
+
+    );
+
+
+    toast(
+
+      'Stream stopped.',
+
+      'inf'
+
+    );
+
+
+    fetchStreams();
+
+  }catch(e){
+
+    toast(
+
+      'Stop failed.',
+
+      'err'
+
+    );
+
+  }
+
+}
+
+
+// DELETE STREAM
+
+async function delStream(id){
+
+  if(
+
+    !confirm(
+
+      'Delete this stream and video file?'
+
+    )
+
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    await fetch(
+
+      `/api/streams/${id}`,
+
+      {method:'DELETE'}
+
+    );
+
+
+    removeCard(id);
+
+
+    const n = Object.keys(S.streams).length;
+
+
+    document.getElementById(
+
+      'empty'
+
+    ).classList.toggle(
+
+      'hidden',
+
+      n>0
+
+    );
+
+
+    document.getElementById(
+
+      'grid'
+
+    ).classList.toggle(
+
+      'hidden',
+
+      n===0
+
+    );
+
+
+    toast(
+
+      'Deleted.',
+
+      'inf'
+
+    );
+
+  }catch(e){
+
+    toast(
+
+      'Delete failed.',
+
+      'err'
+
+    );
+
+  }
+
+}
+
+
+// SCHEDULE STOP
+
+function openSchedModal(id){
+
+  S.schedId = id;
+
+
+  const sl = S.streams[id];
+
+
+  if(sl?.stop_at){
+
+    try{
+
+      const d = new Date(sl.stop_at);
+
+
+      document.getElementById(
+
+        'sched-stop-val'
+
+      ).value = new Date(
+
+        d.getTime() -
+
+        d.getTimezoneOffset()*60000
+
+      ).toISOString().slice(0,16);
+
+    }catch(e){}
+
+  }else{
+
+    document.getElementById(
+
+      'sched-stop-val'
+
+    ).value = '';
+
+  }
+
+
+  document.getElementById(
+
+    'sched-overlay'
+
+  ).classList.remove('hidden');
+
+}
+
+
+async function applyStop(){
+
+  const val = document.getElementById(
+
+    'sched-stop-val'
+
+  ).value;
+
+
+  let stop_at = '';
+
+
+  if(val){
+
+    const d = new Date(val);
+
+
+    if(isNaN(d)){
+
+      toast(
+
+        'Invalid time.',
+
+        'err'
+
+      );
+
+      return;
+
+    }
+
+
+    if(d<=new Date()){
+
+      toast(
+
+        'Must be in the future.',
+
+        'err'
+
+      );
+
+      return;
+
+    }
+
+
+    stop_at = d.toISOString();
+
+  }
+
+
+  try{
+
+    await fetch(
+
+      `/api/streams/${S.schedId}`,
+
+      {
+
+        method:'PATCH',
+
+        headers:{
+
+          'Content-Type':'application/json'
+
+        },
+
+        body:JSON.stringify({
+
+          stop_at
+
+        })
+
+      }
+
+    );
+
+
+    toast(
+
+      stop_at
+
+      ? 'Stop scheduled.'
+
+      : 'Schedule cleared.',
+
+      'ok'
+
+    );
+
+
+    document.getElementById(
+
+      'sched-overlay'
+
+    ).classList.add('hidden');
+
+
+    fetchStreams();
+
+  }catch(e){
+
+    toast(
+
+      'Failed.',
+
+      'err'
+
+    );
+
+  }
+
+}
+
+
+// MODAL
+
+function openModal(){
+
+  document.getElementById(
+
+    'overlay'
+
+  ).classList.remove('hidden');
+
+}
+
+
+function closeModal(){
+
+  document.getElementById(
+
+    'overlay'
+
+  ).classList.add('hidden');
+
+
+  resetModal();
+
+}
+
+
+function maybeClose(e){
+
+  if(
+
+    e.target === document.getElementById(
+
+      'overlay'
+
+    )
+
+  ){
+
+    closeModal();
+
+  }
+
+}
+
+
+// RATIO
+
+function setRatio(r){
+
+  S.ratio = r;
+
+
+  const b1 = document.getElementById('r169');
+
+  const b2 = document.getElementById('r916');
+
+  const h = document.getElementById('ratio-hint');
+
+
+  if(r==='16:9'){
+
+    b1.style.background = '#1a1a24';
+
+    b1.style.color = '#e2e2f0';
+
+
+    b2.style.background = 'transparent';
+
+    b2.style.color = 'rgba(255,255,255,.4)';
+
+
+    h.textContent =
+
+      '1280×720 — Standard YouTube/Facebook';
+
+  }else{
+
+    b2.style.background = '#1a1a24';
+
+    b2.style.color = '#e2e2f0';
+
+
+    b1.style.background = 'transparent';
+
+    b1.style.color = 'rgba(255,255,255,.4)';
+
+
+    h.textContent =
+
+      '720×1280 — Vertical Live Video';
+
+  }
+
+}
+
+
+// SCHEDULE TOGGLE
+
+function toggleSched(){
+
+  document.getElementById(
+
+    'sched-panel'
+
+  ).classList.toggle(
+
+    'hidden',
+
+    !document.getElementById(
+
+      'f-sched'
+
+    ).checked
+
+  );
+
+}
+
+
+// RESET
+
+function resetModal(){
+
+  [
+
+    'f-name',
+
+    'f-dur',
+
+    'f-key',
+
+    'f-backup',
+
+    'f-start',
+
+    'f-stop'
+
+  ].forEach(id=>{
+
+    const e = document.getElementById(id);
+
+    if(e){
+
+      e.value = '';
+
+    }
+
+  });
+
+
+  document.getElementById(
+
+    'f-platform'
+
+  ).value = 'youtube';
+
+
+  document.getElementById(
+
+    'f-sched'
+
+  ).checked = false;
+
+
+  document.getElementById(
+
+    'sched-panel'
+
+  ).classList.add('hidden');
+
+
+  S.videoFile = null;
+
+  S.videoPath = null;
+
+  S.videoFilename = null;
+
+
+  document.getElementById(
+
+    'video-idle'
+
+  ).classList.remove('hidden');
+
+
+  document.getElementById(
+
+    'video-ok'
+
+  ).classList.add('hidden');
+
+
+  document.getElementById(
+
+    'video-prog'
+
+  ).classList.add('hidden');
+
+
+  document.getElementById(
+
+    'submit-lbl'
+
+  ).textContent = 'Start Stream';
+
+
+  document.getElementById(
+
+    'submit-btn'
+
+  ).disabled = false;
+
+
+  setRatio('9:16');
+
+}
+
+
+// DROPZONE
+
+function dzOver(e,id){
+
+  e.preventDefault();
+
+
+  document.getElementById(
+
+    id
+
+  )?.classList.add('drag');
+
+}
+
+
+function dzOut(e,id){
+
+  e.preventDefault();
+
+
+  document.getElementById(
+
+    id
+
+  )?.classList.remove('drag');
+
+}
+
+
+function dzDrop(e,type){
+
+  e.preventDefault();
+
+
+  e.currentTarget?.classList.remove('drag');
+
+
+  const f = e.dataTransfer?.files?.[0];
+
+
+  if(!f){
+
+    return;
+
+  }
+
+
+  if(type==='video'){
+
+    setVideo(f);
+
+  }
+
+}
+
+
+function fileChosen(inp,type){
+
+  if(!inp.files[0]){
+
+    return;
+
+  }
+
+
+  if(type==='video'){
+
+    setVideo(inp.files[0]);
+
+  }
+
+}
+
+
+// SET VIDEO
+
+function setVideo(f){
+
+  if(!f.type.startsWith('video/') &&
+
+     !/\.(mp4|mkv|mov|avi|webm|m4v)$/i.test(f.name)){
+
+    toast(
+
+      'Please select a valid video file.',
+
+      'err'
+
+    );
+
+    return;
+
+  }
+
+
+  if(f.size > 4*1024*1024*1024){
+
+    toast(
+
+      'Video cannot exceed 4GB.',
+
+      'err'
+
+    );
+
+    return;
+
+  }
+
+
+  S.videoFile = f;
+
+  S.videoPath = null;
+
+
+  document.getElementById(
+
+    'video-idle'
+
+  ).classList.add('hidden');
+
+
+  document.getElementById(
+
+    'video-ok'
+
+  ).classList.remove('hidden');
+
+
+  document.getElementById(
+
+    'video-name'
+
+  ).textContent = f.name;
+
+
+  document.getElementById(
+
+    'video-size'
+
+  ).textContent =
+
+    (f.size/1e6).toFixed(1)+' MB';
+
+}
+
+
+// XHR UPLOAD
+
+function xhrUpload(
+
+  file,
+
+  endpoint,
+
+  barId,
+
+  pctId,
+
+  wrapId
+
+){
+
+  return new Promise((res,rej)=>{
+
+    const fd = new FormData();
+
+
+    fd.append(
+
+      'file',
+
+      file
+
+    );
+
+
+    const xhr = new XMLHttpRequest();
+
+
+    xhr.open(
+
+      'POST',
+
+      endpoint
+
+    );
+
+
+    document.getElementById(
+
+      wrapId
+
+    )?.classList.remove('hidden');
+
+
+    xhr.upload.onprogress = ev=>{
+
+      if(!ev.lengthComputable){
+
+        return;
+
+      }
+
+
+      const pct = Math.round(
+
+        ev.loaded/ev.total*100
+
+      );
+
+
+      const b = document.getElementById(
+
+        barId
+
+      );
+
+
+      if(b){
+
+        b.style.width = pct+'%';
+
+      }
+
+
+      const p = document.getElementById(
+
+        pctId
+
+      );
+
+
+      if(p){
+
+        p.textContent = pct+'%';
+
+      }
+
+    };
+
+
+    xhr.onload = ()=>{
+
+      document.getElementById(
+
+        wrapId
+
+      )?.classList.add('hidden');
+
+
+      try{
+
+        const d = JSON.parse(
+
+          xhr.responseText
+
+        );
+
+
+        if(
+
+          xhr.status>=200 &&
+
+          xhr.status<300 &&
+
+          d.ok
+
+        ){
+
+          res(d);
+
+        }else{
+
+          rej(
+
+            new Error(
+
+              d.detail ||
+
+              'Upload failed ('+
+
+              xhr.status+
+
+              ')'
+
+            )
+
+          );
+
+        }
+
+      }catch(e){
+
+        rej(
+
+          new Error(
+
+            'Server returned invalid response.'
+
+          )
+
+        );
+
+      }
+
+    };
+
+
+    xhr.onerror = ()=>{
+
+      document.getElementById(
+
+        wrapId
+
+      )?.classList.add('hidden');
+
+
+      rej(
+
+        new Error(
+
+          'Network error during upload.'
+
+        )
+
+      );
+
+    };
+
+
+    xhr.timeout = 0;
+
+
+    xhr.send(fd);
+
+  });
+
+}
+
+
+// SUBMIT STREAM
+
+async function submitStream(){
+
+  const btn = document.getElementById(
+
+    'submit-btn'
+
+  );
+
+
+  const lbl = document.getElementById(
+
+    'submit-lbl'
+
+  );
+
+
+  const key = document.getElementById(
+
+    'f-key'
+
+  ).value.trim();
+
+
+  const mins = parseInt(
+
+    document.getElementById(
+
+      'f-dur'
+
+    ).value
+
+  );
+
+
+  const platform = document.getElementById(
+
+    'f-platform'
+
+  ).value;
+
+
+  if(!key){
+
+    toast(
+
+      'Stream key required.',
+
+      'err'
+
+    );
+
+    return;
+
+  }
+
+
+  if(!mins || mins<2){
+
+    toast(
+
+      'Enter total duration (minimum 2 minutes).',
+
+      'err'
+
+    );
+
+    return;
+
+  }
+
+
+  if(!S.videoFile && !S.videoPath){
+
+    toast(
+
+      'Please select a video.',
+
+      'err'
+
+    );
+
+    return;
+
+  }
+
+
+  btn.disabled = true;
+
+
+  if(S.videoFile && !S.videoPath){
+
+    lbl.textContent =
+
+      'Uploading video…';
+
+
+    try{
+
+      const r = await xhrUpload(
+
+        S.videoFile,
+
+        '/api/upload/video',
+
+        'video-bar',
+
+        'video-pct',
+
+        'video-prog'
+
+      );
+
+
+      S.videoPath = r.path;
+
+      S.videoFilename = r.filename;
+
+      S.videoFile = null;
+
+
+      toast(
+
+        'Video uploaded ✓',
+
+        'ok'
+
+      );
+
+    }catch(e){
+
+      toast(
+
+        e.message,
+
+        'err'
+
+      );
+
+
+      btn.disabled = false;
+
+      lbl.textContent =
+
+        'Start Stream';
+
+
+      return;
+
+    }
+
+  }
+
+
+  let start_at = '';
+
+  let stop_at = '';
+
+
+  if(
+
+    document.getElementById(
+
+      'f-sched'
+
+    ).checked
+
+  ){
+
+    const sv = document.getElementById(
+
+      'f-start'
+
+    ).value;
+
+
+    const ev = document.getElementById(
+
+      'f-stop'
+
+    ).value;
+
+
+    if(sv){
+
+      const d = new Date(sv);
+
+
+      if(!isNaN(d)){
+
+        start_at = d.toISOString();
+
+      }
+
+    }
+
+
+    if(ev){
+
+      const d = new Date(ev);
+
+
+      if(
+
+        !isNaN(d) &&
+
+        d>new Date()
+
+      ){
+
+        stop_at = d.toISOString();
+
+      }
+
+    }
+
+  }
+
+
+  lbl.textContent =
+
+    'Starting…';
+
+
+  try{
+
+    const r = await fetch(
+
+      '/api/streams',
+
+      {
+
+        method:'POST',
+
+        headers:{
+
+          'Content-Type':'application/json'
+
+        },
+
+        body:JSON.stringify({
+
+          name:
+
+            document.getElementById(
+
+              'f-name'
+
+            ).value.trim() ||
+
+            'Live Stream',
+
+          ratio:S.ratio,
+
+          video_path:S.videoPath,
+
+          filename:S.videoFilename || '',
+
+          total_minutes:mins,
+
+          platform,
+
+          stream_key:key,
+
+          backup_rtmp:
+
+            document.getElementById(
+
+              'f-backup'
+
+            ).value.trim(),
+
+          start_at,
+
+          stop_at
+
+        })
+
+      }
+
+    );
+
+
+    const d = await r.json();
+
+
+    if(!r.ok){
+
+      throw new Error(
+
+        d.detail || 'Error'
+
+      );
+
+    }
+
+
+    toast(
+
+      d.status === 'scheduled'
+
+      ? `"${d.name}" scheduled!`
+
+      : `"${d.name}" is LIVE!`,
+
+      'ok'
+
+    );
+
+
+    closeModal();
+
+
+    fetchStreams();
+
+
+  }catch(e){
+
+    toast(
+
+      e.message,
+
+      'err'
+
+    );
+
+  }
+
+
+  btn.disabled = false;
+
+
+  lbl.textContent =
+
+    'Start Stream';
+
+}
+
+
+// TOAST
+
+function toast(
+
+  msg,
+
+  type='inf'
+
+){
+
+  const c = document.getElementById(
+
+    'toasts'
+
+  );
+
+
+  const el = document.createElement(
+
+    'div'
+
+  );
+
+
+  el.className =
+
+    'toast '+type;
+
+
+  el.textContent = msg;
+
+
+  c.appendChild(el);
+
+
+  setTimeout(()=>{
+
+    el.style.opacity = '0';
+
+    el.style.transition =
+
+      'opacity .3s';
+
+
+    setTimeout(()=>{
+
+      el.remove();
+
+    },300);
+
+  },4500);
+
+}
+
+
+// ESCAPE HTML
+
+function esc(s){
+
+  return String(s)
+
+    .replace(/&/g,'&amp;')
+
+    .replace(/</g,'&lt;')
+
+    .replace(/>/g,'&gt;');
+
+}
+
+
+// ESC KEY
+
+document.addEventListener(
+
+  'keydown',
+
+  e=>{
+
+    if(e.key==='Escape'){
+
+      closeModal();
+
+      document.getElementById(
+
+        'sched-overlay'
+
+      ).classList.add('hidden');
+
+    }
+
+  }
+
+);
+
+</script>
+
+</body>
+</html>
