@@ -1,1 +1,28 @@
+name: Stream Live
 
+on:
+  workflow_dispatch:
+
+jobs:
+  stream:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Run Stream Script
+        env:
+          STREAM_URL: ${{ secrets.STREAM_URL }}
+          STREAM_KEY: ${{ secrets.STREAM_KEY }}
+        run: |
+          python app.py
